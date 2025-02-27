@@ -1,6 +1,6 @@
 # Utility Staking on Solana
 
-A decentralised platform inspired by pump.fun, where users can create a single utility token for any real-world token (e.g. ETH.util for ETH) and then stake on utility-specific keywords under that token. The system uses game mechanics to reward stakers, penalise false keywords via DAO-style governance, and allow token owners to lock in verified keywords to secure stakers’ funds.
+A decentralized platform inspired by pump.fun, where users can create a single utility token for any real-world token (e.g., `ETH.util` for ETH) and stake on utility-specific keywords under that token. The system uses game theory mechanics to reward stakers for niche, accurate keywords, penalize false claims via DAO-style governance, and provide a continuous dopamine hit through periodic rewards and interactive boosting.
 
 ## Table of Contents
 
@@ -16,98 +16,102 @@ A decentralised platform inspired by pump.fun, where users can create a single u
 
 ## Overview
 
-This project is a Solana-based decentralised application (dApp) that bridges the gap between meme coins and utility tokens. Users can create a single utility token tied to any "real" token (for instance, ETH.util based on ETH) — ensuring one utility token per real token. Under each created utility token, users can propose and stake on various utility-related keywords (e.g. "Level 1", "EVM", "Gas Token"). The staking game is designed with DAO-style mechanisms that allow the community or admin to validate or eliminate keywords, rewarding stakers for choosing niche yet accurate descriptors while penalising overhyped or false claims.
+This project is a Solana-based decentralized application (dApp) that blends meme coin dynamics with utility token functionality. Users create one utility token per real token (e.g., `ETH.util` for ETH), ensuring uniqueness, and then stake on keywords that describe the token’s utility (e.g., "EVM", "Gas Token", "Layer 1"). A game-theoretic staking system rewards users for choosing rare yet accurate keywords, while DAO-style governance validates or eliminates keywords. Periodic reward drips and a comment boost decay mechanic keep users engaged, delivering a continuous dopamine hit.
 
 ## Features
 
 - **Utility Token Creation:**  
-  Create one utility token for any real token (e.g. ETH.util for ETH), with token metadata pulled from CoinGecko or a similar source.
+  Create one utility token per real token, with metadata sourced from CoinGecko or similar APIs.
 
 - **Keyword-Specific Staking:**  
-  Each utility token can have its own set of keywords. Users stake on these keywords to reflect the token’s perceived utility (e.g. "Level 1", "EVM", "Gas Token").
+  Users propose and stake on keywords under each utility token. Rarer keywords (fewer stakers) yield higher per-staker rewards, incentivizing strategic niche picks.
 
 - **DAO-Style Governance:**  
-  Community or admin voting mechanisms to eliminate or validate (lock-in) keywords, ensuring a playful yet robust ecosystem.
+  Community or admin can lock verified keywords or eliminate false ones, with eliminated stakes burned to deter overhype.
 
 - **Reward Mechanism:**  
-  Rewards are distributed evenly among stakers for a given keyword, meaning that keywords with fewer stakers yield higher per-staker rewards.
+  - **Periodic Drips:** Rewards are distributed daily to stakers based on a quadratic formula favoring niche keywords, keeping users hooked.  
+  - **Rarity Bonus:** Fewer stakers on a keyword amplify rewards, encouraging early adoption and accuracy.
 
 - **Penalty & Burn:**  
-  Keywords that are eliminated trigger the burning or redistribution of staked tokens, maintaining game integrity.
+  Eliminated keywords trigger a burn of staked tokens, maintaining ecosystem integrity and punishing speculative overhype.
+
+- **Commenting & Boosting:**  
+  - Token holders post comments with an initial boost (cost in tokens).  
+  - Boosts decay over time (e.g., halve every 7 days), encouraging continuous engagement to maintain relevance.  
+  - Boost costs are distributed to associated keyword vaults.
 
 - **Admin/DAO Keyword Lock:**  
-  Prevent whales from manipulating outcomes by locking in verified keywords, thereby securing staker rewards.
+  Verified keywords can be locked to secure staker rewards and prevent manipulation by whales.
 
 ## Tech Stack
 
 - **Solana:**  
-  High throughput, low fees blockchain network.
+  High-throughput, low-fee blockchain network.
 
 - **Rust & Anchor:**  
   For writing and deploying Solana programs (smart contracts).
 
 - **TypeScript/JavaScript:**  
-  For front-end development (React, Next.js or similar).
+  Frontend development with React or Next.js.
 
 - **CoinGecko API:**  
-  For pulling coin metadata and utility data.
+  For pulling real token metadata.
 
 - **Additional Libraries:**  
-  - Chart.js / D3.js for data visualisation.
-  - Solana Web3.js for interacting with the blockchain.
+  - Chart.js / D3.js for staking and reward visualizations.  
+  - Solana Web3.js for blockchain interactions.
 
 ## Architecture
 
-The dApp is composed of three primary layers:
+The dApp consists of three layers:
 
 1. **Frontend UI:**  
-   Provides the user interface for creating utility tokens, staking on keywords, viewing charts, and interacting with the DAO.
+   Interfaces for token creation, keyword staking, comment boosting, and reward tracking, with visualizations for stakes and reward countdowns.
 
 2. **Backend API (Optional):**  
-   Handles off-chain logic, data aggregation from CoinGecko, and serves data to the frontend.
+   Aggregates off-chain data (e.g., CoinGecko metadata) and serves analytics to the frontend.
 
 3. **Solana Program (On-Chain):**  
-   Implements utility token creation, staking, reward distribution, DAO governance, and keyword management.
+   Handles token creation, staking, reward distribution, governance, and comment mechanics.
 
 ### High-Level Architecture Diagram
-
 ```
-              +------------------------------+
-              |         Frontend UI          |
-              | (React/Next.js + Charts)     |
-              +-------------+----------------+
-                            |
-                            v
-              +------------------------------+
-              |     Backend API Server       |  <-- Optional: for data aggregation & analytics
-              +-------------+----------------+
-                            |
-                            v
-              +------------------------------+
-              |   Solana Program (Rust)      |
-              |    [Anchor Framework]        |
-              +------------------------------+
+          +----------------------------------+
+          |         Frontend UI            |
+          | (React/Next.js + Charts)       |
+          +---------------+------------------+
+                          |
+                          v
+          +----------------------------------+
+          |     Backend API Server          |  <-- Optional: for data aggregation & analytics
+          +---------------+------------------+
+                          |
+                          v
+          +----------------------------------+
+          |   Solana Program (Rust)         |
+          |    [Anchor Framework]           |
+          +----------------------------------+
 ```
 
 ## Project Structure
 
-A suggested project structure:
-
+Suggested structure:
 ```
 utility-staking-solana/
 ├── programs/                 # Solana program (Rust/Anchor)
 │   ├── Cargo.toml
 │   ├── Anchor.toml
 │   └── src/
-│       ├── lib.rs            # Main program logic (utility token creation, staking, DAO functions, etc.)
-│       └── instructions/     # Modules for stake, unstake, reward, lock_keyword, eliminate_keyword, etc.
+│       ├── lib.rs            # Core logic (token creation, staking, rewards, governance)
+│       └── instructions/     # Instruction modules (stake, boost, lock, eliminate, etc.)
 ├── app/                      # Frontend dApp (React/Next.js)
 │   ├── package.json
 │   ├── src/
-│   │   ├── components/       # UI components (creation forms, staking panels, charts, etc.)
+│   │   ├── components/       # UI components (token forms, staking panels, charts)
 │   │   ├── pages/            # Application pages
-│   │   └── utils/            # Solana/web3 and API utilities
-├── backend/                  # Optional API server for CoinGecko data, analytics, etc.
+│   │   └── utils/            # Solana/Web3.js and API utilities
+├── backend/                  # Optional API server
 │   ├── package.json
 │   └── src/
 │       └── index.ts
@@ -117,54 +121,54 @@ utility-staking-solana/
 ## Plan of Action
 
 1. **Requirements & Specification:**  
-   - Define the rules for utility token creation (one per real token) and keyword staking.
-   - Document business rules for utility keywords, penalties, rewards, and DAO governance.
-   - Decide on off-chain vs. on-chain responsibilities.
+   - Define rules for token creation, keyword staking, and reward distribution.  
+   - Specify governance mechanics (locking, elimination) and boost decay parameters.  
+   - Clarify on-chain vs. off-chain responsibilities.
 
 2. **Development Environment Setup:**  
-   - Install Rust, Anchor, and Solana CLI.
-   - Initialise the Anchor project in the `programs/` directory.
-   - Set up the frontend framework (e.g. Next.js) in the `app/` directory.
-   - Configure the optional backend API server if needed.
+   - Install Rust, Anchor, and Solana CLI.  
+   - Initialize Anchor project in `programs/`.  
+   - Set up frontend (e.g., Next.js) in `app/`.  
+   - Configure optional backend API if needed.
 
 3. **Smart Contract Development:**  
-   - Develop utility token creation logic tied to real tokens (with CoinGecko integration for metadata).
-   - Build the basic staking mechanism for keywords (stake/unstake functions).
-   - Implement DAO-style governance functions (lock_keyword, eliminate_keyword).
-   - Develop reward distribution logic to split rewards evenly across keyword stakers.
+   - Implement utility token creation with CoinGecko metadata integration.  
+   - Build keyword staking and reward distribution (quadratic rarity bonus, daily drips).  
+   - Add governance functions (`lock_keyword`, `eliminate_keyword`) and boost decay logic.  
 
 4. **Frontend Development:**  
-   - Build UI for creating utility tokens and displaying token information.
-   - Develop interfaces for staking on keywords and visualising utility metrics (charts).
-   - Integrate Solana Web3.js for interaction with on-chain programs.
+   - Create UI for token creation, keyword staking, and comment boosting.  
+   - Add visualizations for stakes, reward countdowns, and boost decay.  
+   - Integrate Solana Web3.js for on-chain interactions.
 
 5. **Testing & Deployment:**  
-   - Write tests for smart contract functions using Anchor's testing framework.
-   - Test the frontend with a local Solana cluster (e.g. Devnet).
-   - Prepare for mainnet deployment and security audits once core features are stable.
+   - Write Anchor tests for staking, rewards, and governance.  
+   - Test on Devnet with simulated staking wars and reward drips.  
+   - Prepare for mainnet deployment with security audits.
 
 6. **Documentation & Community:**  
-   - Document the process for utility token creation, staking, and DAO governance.
-   - Create user guides and developer docs.
-   - Engage early adopters to gather feedback and refine the game mechanics.
+   - Document token creation, staking, boosting, and governance processes.  
+   - Provide user guides and developer docs.  
+   - Engage early adopters to refine mechanics.
 
 ## Development Roadmap
 
 - **Phase 1:**  
-  - Set up the development environment.
-  - Build a minimal viable product (MVP) with core utility token creation and staking functionality.
+  - Set up environment and build MVP with token creation and basic staking.  
+  - Implement comment posting and boosting with decay.
 
 - **Phase 2:**  
-  - Implement DAO-style keyword governance.
-  - Integrate off-chain data (CoinGecko API) and data visualisation components.
+  - Add keyword vaults, quadratic rewards, and daily reward drips.  
+  - Integrate DAO-style governance and CoinGecko data.
 
 - **Phase 3:**  
-  - Conduct user testing, community engagement, and refine game mechanics.
-  - Prepare for mainnet deployment and perform security audits.
+  - Conduct user testing and community feedback sessions.  
+  - Optimize game mechanics (e.g., reward intervals, decay rates).  
+  - Deploy to mainnet after audits.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request. Ensure your code adheres to our style guidelines and includes tests where applicable.
+Contributions are welcome! Fork the repo and submit pull requests. Ensure code follows style guidelines and includes tests.
 
 ## License
 
